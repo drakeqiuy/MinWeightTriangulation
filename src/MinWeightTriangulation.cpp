@@ -7,6 +7,8 @@
 //============================================================================
 
 #include <iostream>
+#include <cstdlib>
+#include <climits>
 #include <vector>
 #include <cmath>
 using namespace std;
@@ -22,7 +24,7 @@ public:
 	int y;
 };
 
-Coordinate::Coordinate(int x, int y)
+Coordinate::Coordinate(int x, int y):x(x),y(y)
 {
 	cin >> this->x >> this->y;
 }
@@ -55,15 +57,9 @@ int main(int argc,char** argv) {
 		t[i] = new int[num];
 	}
 
-	cout<<"min weight is : "<<min_weight_triangulation(num - 1,t,s,vec)<<endl;
+	cout<<"min sum of weight is : "<<min_weight_triangulation(num - 1,t,s,vec)<<endl;
 
 	traceback(1, num - 1, s);
-	/*for(vector<Coordinate>::iterator it = vec.begin(); it != vec.end(); ++it)
-	{
-		cout << it->x << " " << it->y << endl;
-	}*/
-
-
 
 	//clear the space for heap memory
 	for(size_t i = 0; i < num; ++i)
@@ -74,6 +70,7 @@ int main(int argc,char** argv) {
 	delete[] t;
 	delete[] s;
 
+	system("PAUSE");
 	return 0;
 }
 
@@ -90,19 +87,18 @@ int distance(const Coordinate &coordinate0, const Coordinate &coordinate1)
 
 int min_weight_triangulation(int n,int **t,int **s, vector<Coordinate> &vec)
 {
-	for(size_t i = 0; i <= n; ++i)
+	for(int i = 0; i <= n; ++i)
 	{
 		t[i][i] = 0;
 	}
-	for(size_t r = 2; r <= n; ++r)
+	for(int r = 2; r <= n; ++r)
 	{
-		for(size_t i = 1; i <= n - r + 1; ++i)
+		for(int i = 1; i <= n - r + 1; ++i)
 		{
-			size_t j = i + r - 1;
-			t[i][j] = t[i + 1][j] + weight(vec[i - 1],vec[i], vec[j]);
-			s[i][j] = i;
+			int j = i + r - 1;
+			t[i][j] = INT_MAX;
 
-			for(size_t k = i + 1; k < i + r - 1; ++k)
+			for(int k = i ; k < i + r - 1; ++k)
 			{
 				int u = t[i][k] + t[k + 1][j] + weight(vec[i - 1], vec[k], vec[j]);
 				if(u < t[i][j])
