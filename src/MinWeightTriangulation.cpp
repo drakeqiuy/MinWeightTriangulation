@@ -35,6 +35,7 @@ int distance(const Coordinate &, const Coordinate &);
 
 int min_weight_triangulation(int n,int **t,int **s,vector<Coordinate> &);
 void traceback(int i,int j,int **s);
+bool validate_shape(vector<Coordinate> &);
 
 int main(int argc,char** argv) {
 	size_t num = 0;
@@ -47,7 +48,11 @@ int main(int argc,char** argv) {
 		cout << "Please enter the coordinate of v" << i <<": ";
 		vec.push_back(Coordinate());
 	}
-
+	if(!validate_shape(vec))
+	{
+		cout << "invalid shape, please try other vertexes." << endl;
+		exit(1);
+	}
 	int **s = new int *[num];
 	int **t = new int *[num];
 
@@ -118,4 +123,50 @@ void traceback(int i,int j,int **s)
 	traceback(i,s[i][j],s);
 	traceback(s[i][j]+1,j,s);
 	cout << "the vertex is v" << i - 1 << ", v" << s[i][j] << ", v" << j << endl;
+}
+
+bool validate_shape(vector<Coordinate> &vec)
+{
+	int vex_num = vec.size();
+	int *total =new int[vex_num];
+
+	for(int j = 0; j < vex_num; ++j)
+	{
+		int p = 0;
+		int q = 0;
+		int a = 0,b = 0,c = 0;
+		if((vex_num - 1) == j)
+		{
+			a = vec[vex_num - 1].y - vec[0].y;
+			b = vec[vex_num - 1].x - vec[0].x;
+			c = b * vec[vex_num - 1].y - a * vec[vex_num - 1].x;
+		}
+		else
+		{
+			a = vec[j].y - vec[j + 1].y;
+			b = vec[j].x - vec[j + 1].x;
+			c = b * vec[j].y - a * vec[j].x;
+		}
+
+		for(int k = 0; k < vex_num; ++k)
+		{
+			total[k] = a * vec[k].x - b * vec[k].y + c;
+			if(total[k] > 0)
+			{
+				p = p + 1;
+			}
+			else if (total[k] < 0)
+			{
+				q = q + 1;
+			}
+		}
+
+		if((p > 0 && q > 0) || (p ==0 && q == 0))
+		{
+			delete[] total;
+			return false;
+		}
+	}
+	delete[] total;
+	return true;
 }
